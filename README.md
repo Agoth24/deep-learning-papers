@@ -95,4 +95,4 @@ A collection of my personal implementations of deep learning papers.
 
 ## Folder Organization
 
-`/paper_title/[notes]` or `/paper_title/[model/algorithm.ipynb]`
+`/paper_title/notes.md` or `/paper_title/[model/algorithm].ipynb`
