@@ -1,6 +1,14 @@
 # Deep Learning Paper Implementations
 
-A collection of my personal implementations of deep learning papers.
+A collection of my personal implementations and mental models of deep learning papers.
+
+> ***Note:*** The markdown notes in each folder are my rough mental dumps written while reading the papers. 
+>
+> Some notes may be sparse or confusing. Details may occasionally be left out if they are common knowledge.
+> 
+> They are subject to change if I go back and want to clean up my mental models of a concept
+
+
 
 ## Paper List
 
