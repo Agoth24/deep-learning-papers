@@ -3,6 +3,7 @@ import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 from torchinfo import summary
+import os
 
 batch_size = 32
 learning_rate = 1e-3
@@ -31,6 +32,7 @@ train_dataset = torchvision.datasets.MNIST(
 test_dataset = torchvision.datasets.MNIST(
     root="./data",
     train=False,
+    download=True,
     transform=transforms.Compose(
         [
             transforms.Resize((32, 32)),
@@ -71,13 +73,67 @@ class LeNet5(nn.Module):
         F6 = nn.Sequential(nn.Linear(120, 84), nn.Tanh())
         output_layer = nn.Linear(84, 10)
 
-        self.layers = nn.Sequential(
-            C1, S2, C3, S4, C5, nn.Flatten(), F6, output_layer
-        )
+        self.layers = nn.Sequential(C1, S2, C3, S4, C5, nn.Flatten(), F6, output_layer)
 
     def forward(self, x):
         output = self.layers(x)
         return output
-    
 
-summary(LeNet5(10))
+
+summary(LeNet5(num_classes))
+
+
+model = LeNet5(num_classes).to(device)
+loss_criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+
+
+def train_loop(dataloader, model, loss_fn, optimizer):
+    size = len(dataloader.dataset)
+    model.train()
+    for batch, (images, labels) in enumerate(dataloader):
+        images, labels = images.to(device), labels.to(device)
+
+        # forward pass
+        pred = model(images)
+        loss = loss_fn(pred, labels)
+
+        # backward pass
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        if batch % 100 == 0:
+            loss, current = loss.item(), batch * len(images)
+            print(f"Training Loss: {loss:>7f} [{current:>5d}/{size:>5d}]")
+
+
+def test_loop(dataloader, model, loss_fn):
+    size = len(dataloader.dataset)
+    num_batches = len(dataloader)
+    model.eval()
+
+    test_loss, correct_preds = 0, 0
+    with torch.no_grad():
+        for images, labels in dataloader:
+            images, labels = images.to(device), labels.to(device)
+
+            pred = model(images)
+            test_loss += loss_fn(pred, labels)
+            correct_preds += (pred.argmax(1) == labels).type(torch.float).sum().item()
+
+        test_loss /= num_batches
+        correct_preds /= size
+        print(
+            f"Test Error: \nAccuracy: {(correct_preds*100):>0.1f}% Avg loss: {test_loss:>8f}\n"
+        )
+    print("Model Testing Complete")
+
+for epoch in range(num_epochs):
+    print(f"Epoch {epoch}\n ---------------------------------------")
+    train_loop(train_dataloader, model=model, loss_fn=loss_criterion, optimizer=optimizer)
+    test_loop(test_dataloader, model=model, loss_fn=loss_criterion)
+
+
+os.makedirs("checkpoints", exist_ok=True)
+torch.save(model.state_dict(), "./checkpoints/lenet5_baseline.pth")
