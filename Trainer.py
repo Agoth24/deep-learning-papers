@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 from torch.optim import Optimizer
 import matplotlib.pyplot as plt
 
+
 class Trainer:
     def __init__(
         self,
@@ -35,6 +36,7 @@ class Trainer:
     def _train_loop(self):
         size = len(self.train_dataloader.dataset)
         self.model.train()
+        correct = 0
         for batch, (X, y) in enumerate(self.train_dataloader):
             X, y = X.to(self.device), y.to(self.device)
 
@@ -50,8 +52,8 @@ class Trainer:
             if batch % 100 == 0:
                 loss, current = loss.item(), batch * len(X)
                 print(f"Training Loss: {loss:>7f} [{current:>5d}/{size:>5d}]")
-        
-        return loss.item()
+        train_acc = 100 * correct / size
+        return loss.item(), train_acc
 
     def _test_loop(self):
         size = len(self.test_dataloader.dataset)
@@ -66,7 +68,7 @@ class Trainer:
                 pred = self.model(X)
                 test_loss += self.loss_fn(pred, y)
                 correct_preds += (pred.argmax(1) == y).type(torch.float).sum().item()
-                
+
             correct_percentage = 100 * correct_preds / size
             test_loss /= num_batches
 
@@ -79,19 +81,19 @@ class Trainer:
         print("--------------- Training Loop ---------------:\n")
         for epoch in range(epochs):
             print(f"Epoch {epoch}\n ---------------------------------------")
-            train_loss = self._train_loop()
+            train_loss, train_acc = self._train_loop()
             test_loss, test_acc = self._test_loop()
 
             self.history["train_loss"].append(train_loss)
             self.history["test_loss"].append(test_loss)
+            self.history["train_accuracy"].append(train_acc)
             self.history["test_accuracy"].append(test_acc)
 
-
     def plot(self):
-        epochs = range(1, len(self.history["train_loss"] + 1))
-        fig, axes = plt.subplots(1, 2, figsize=(12,4))
+        epochs = range(1, len(self.history["train_loss"]) + 1)
+        fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 
-        axes[0].plot(epochs, self.history["train_loss"], label="Train oss")
+        axes[0].plot(epochs, self.history["train_loss"], label="Train loss")
         axes[0].plot(epochs, self.history["test_loss"], label="Test loss")
         axes[0].set_xlabel("Epoch")
         axes[0].set_ylabel("Loss")
