@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from torch.optim import Optimizer
+from torch.optim import Optimizer, lr_scheduler
 import matplotlib.pyplot as plt
 
 
@@ -14,6 +14,7 @@ class Trainer:
         loss_fn: nn.Module,
         optimizer: Optimizer,
         device: str | None = None,
+        scheduler: lr_scheduler.LRScheduler | None = None,
     ):
         self.device = device or (
             "cuda"
@@ -24,6 +25,7 @@ class Trainer:
         self.test_dataloader = test_dataloader
         self.model = model.to(self.device)
         self.optimizer = optimizer
+        self.scheduler = scheduler
         self.loss_fn = loss_fn
 
         self.history = {
@@ -34,9 +36,11 @@ class Trainer:
         }
 
     def _train_loop(self):
-        size = len(self.train_dataloader.dataset)
+        train_set_size = len(self.train_dataloader.dataset)
+        num_batches = len(self.train_dataloader)
         self.model.train()
-        correct = 0
+
+        train_loss, correct_preds = 0, 0
         for batch, (X, y) in enumerate(self.train_dataloader):
             X, y = X.to(self.device), y.to(self.device)
 
@@ -47,16 +51,26 @@ class Trainer:
             # backward pass
             self.optimizer.zero_grad()
             loss.backward()
+
             self.optimizer.step()
+            if self.scheduler:
+                self.scheduler.step()
+
+            train_loss += loss.item()
+            correct_preds += (pred.argmax(1) == y).type(torch.float).sum().item()
+
 
             if batch % 100 == 0:
-                loss, current = loss.item(), batch * len(X)
-                print(f"Training Loss: {loss:>7f} [{current:>5d}/{size:>5d}]")
-        train_acc = 100 * correct / size
-        return loss.item(), train_acc
+                current = batch * len(X)
+                print(
+                    f"Training Loss: {loss.item():>7f} [{current:>5d}/{train_set_size:>5d}]"
+                )
+        train_loss /= num_batches
+        train_acc = 100 * correct_preds / train_set_size
+        return train_loss, train_acc
 
     def _test_loop(self):
-        size = len(self.test_dataloader.dataset)
+        test_set_size = len(self.test_dataloader.dataset)
         num_batches = len(self.test_dataloader)
         self.model.eval()
 
@@ -69,8 +83,8 @@ class Trainer:
                 test_loss += self.loss_fn(pred, y)
                 correct_preds += (pred.argmax(1) == y).type(torch.float).sum().item()
 
-            correct_percentage = 100 * correct_preds / size
             test_loss /= num_batches
+            correct_percentage = 100 * correct_preds / test_set_size
 
             print(
                 f"Test Error: \nAccuracy: {(correct_percentage):>0.1f}% Avg loss: {test_loss:>8f}\n"

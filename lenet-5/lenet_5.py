@@ -8,7 +8,7 @@ import os
 
 
 batch_size = 32
-learning_rate = 1e-3
+learning_rate = 1e-2
 num_classes = 10
 num_epochs = 10
 
@@ -87,9 +87,6 @@ class LeNet5(nn.Module):
 summary(LeNet5(num_classes))
 
 
-model = LeNet5(num_classes).to(device)
-loss_criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
 
 # def train_loop(dataloader, model, loss_fn, optimizer):
@@ -140,6 +137,11 @@ optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
 # os.makedirs("checkpoints", exist_ok=True)
 # torch.save(model.state_dict(), "./checkpoints/lenet5_baseline.pth")
+model = LeNet5(num_classes).to(device)
+loss_criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, learning_rate, 0.9)
 
 trainer = Trainer(train_dataloader, test_dataloader, model, loss_criterion, optimizer, device)
 trainer.fit(epochs=10)
