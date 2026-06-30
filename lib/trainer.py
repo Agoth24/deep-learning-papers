@@ -78,9 +78,9 @@ class Trainer:
         return test_loss.item(), correct_percentage
 
     def fit(self, epochs: int):
-        print("--------------- Training Loop ---------------:\n")
+        print("--------------- Training Loop ---------------\n")
         for epoch in range(epochs):
-            print(f"Epoch {epoch}\n ---------------------------------------")
+            print(f"Epoch {epoch + 1}\n ---------------------------------------")
             train_loss, train_acc = self._train_loop()
             test_loss, test_acc = self._test_loop()
 
