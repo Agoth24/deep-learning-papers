@@ -64,6 +64,16 @@ mini-batch statistics are computer per feature map
 inputs are normalized based on seeing the batch data so network is not fully
 deterministic for training examples
 
+### how to make bn work well
+
+- increase learning rate
+- remove dropout
+- reduce l2 regularization
+- speed up lr decay
+- remove LRU
+- shuffle batches better
+- reduce distortions in data
+
 ### main takeaway
 
 normalize inputs to layers using mini-batch stats --> speeds up training by
