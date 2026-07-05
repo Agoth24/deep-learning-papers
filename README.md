@@ -41,21 +41,21 @@ A collection of my personal implementations and mental models of deep learning p
 - ~~Gradient-Based Learning/LeNet5 (1998)\
   LeCun, Bengio~~
 
-- AlexNet (2012)\
-   Krizhevsky, Sutskever, Hinton
+- ~~AlexNet (2012)\
+   Krizhevsky, Sutskever, Hinton~~
 
-- VGGNet (2014)\
-  Simonyan, Zisserman
+- ~~VGGNet (2014)\
+  Simonyan, Zisserman~~
 
 ---
 
 ### Residual Networks
 
-- Batch Normalization (2015)\
-   Ioffe, Szegedy
+- ~~Kaiming Init (2015)\
+  He et al.~~
 
-- Kaiming Init (2015)\
-  He et al.
+- ~~Batch Normalization (2015)\
+   Ioffe, Szegedy~~
 
 - ResNet (2016)\
   He et al.
