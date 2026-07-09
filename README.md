@@ -64,6 +64,9 @@ A collection of my personal implementations and mental models of deep learning p
 
 ### NLP Foundations
 
+- RNN Overview (2019)
+  Robin M. Schmidt
+
 - LSTM (1997)\
   Hochreiter, Schmidhuber
 
