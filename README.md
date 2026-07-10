@@ -1,14 +1,16 @@
 # Deep Learning Paper Implementations
 
-A collection of my personal implementations and mental models of deep learning papers.
+A collection of my personal implementations and mental models of deep learning
+papers.
 
-> ***Note:*** The markdown notes in each folder are my rough mental dumps written while reading the papers. 
+> **_Note:_** The markdown notes in each folder are my rough mental dumps
+> written while reading the papers.
 >
-> Some notes may be sparse or confusing. Details may occasionally be left out if they are common knowledge.
-> 
-> They are subject to change if I go back and want to clean up my mental models of a concept
-
-
+> Some notes may be sparse or confusing. Details may occasionally be left out if
+> they are common knowledge.
+>
+> They are subject to change if I go back and want to clean up my mental models
+> of a concept
 
 ## Paper List
 
@@ -55,31 +57,35 @@ A collection of my personal implementations and mental models of deep learning p
   He et al.~~
 
 - ~~Batch Normalization (2015)\
-   Ioffe, Szegedy~~
+  Ioffe, Szegedy~~
 
-- ResNet (2016)\
-  He et al.
+- ~~ResNet (2016)\
+  He et al.~~
 
 ---
 
 ### NLP Foundations
 
-- RNN Overview (2019)
-  Robin M. Schmidt
+- ~~RNN Overview (2019)\
+  Robin M. Schmidt~~
 
-- LSTM (1997)\
-  Hochreiter, Schmidhuber
+- ~~LSTM (1997)\
+  Hochreiter, Schmidhuber~~
 
 - Word2Vec (2013)\
   Mikolov et al.
 
-- RNN Encoder-Decoders (2014) Cho, Bengio
+- RNN Encoder-Decoders (2014)\
+  Cho, Bengio
 
 - Seq2Seq (2014)\
   Sutskever, Vinyals, Le
 
 - Attention (2014)\
   Bahdanau, Cho, Bengio
+
+- Attention-Based NMT (2015)\
+  Luong et al.
 
 ---
 
