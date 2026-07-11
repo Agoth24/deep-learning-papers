@@ -72,7 +72,10 @@ papers.
 - ~~LSTM (1997)\
   Hochreiter, Schmidhuber~~
 
-- Word2Vec (2013)\
+- Word2Vec Word Representations(2013)\
+  Mikolov et al.
+
+- Word2Vec Distributed Representations (2013)\
   Mikolov et al.
 
 - RNN Encoder-Decoders (2014)\
