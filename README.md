@@ -72,10 +72,10 @@ papers.
 - ~~LSTM (1997)\
   Hochreiter, Schmidhuber~~
 
-- Word2Vec Word Representations(2013)\
-  Mikolov et al.
+- ~~Word2Vec Word Estimations (2013)\
+  Mikolov et al.~~
 
-- Negative Sampling (2013)
+- Word2Vec Negative Sampling (2013)\
   Mikolov et al.
 
 - RNN Encoder-Decoders (2014)\
