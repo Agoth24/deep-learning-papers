@@ -75,8 +75,8 @@ papers.
 - ~~Word2Vec Word Estimations (2013)\
   Mikolov et al.~~
 
-- Word2Vec Negative Sampling (2013)\
-  Mikolov et al.
+- ~~Word2Vec Negative Sampling (2013)\
+  Mikolov et al.~~
 
 - RNN Encoder-Decoders (2014)\
   Cho, Bengio
