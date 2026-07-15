@@ -78,8 +78,8 @@ papers.
 - ~~Word2Vec Negative Sampling (2013)\
   Mikolov et al.~~
 
-- RNN Encoder-Decoders (2014)\
-  Cho, Bengio
+- ~~RNN Encoder-Decoders (2014)\
+  Cho, Bengio~~
 
 - Seq2Seq (2014)\
   Sutskever, Vinyals, Le
