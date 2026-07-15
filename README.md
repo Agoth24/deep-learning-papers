@@ -9,8 +9,7 @@ papers.
 > Some notes may be sparse or confusing. Details may occasionally be left out if
 > they are common knowledge.
 >
-> They are subject to change if I go back and want to clean up my mental models
-> of a concept
+> The notes are subject to change (e.g., being edited during a re-read)
 
 ## Paper List
 
@@ -19,22 +18,24 @@ papers.
 - ~~Deep Learning Review (2015)\
    LeCun, Bengio, Hinton~~
 
-- ~~Backpropagation (1986) Rumelhart, Hinton, Williams~~
+- ~~Backpropagation (1986)\
+  Rumelhart, Hinton, Williams~~
 
 ---
 
 ### Optimization & Regularization
 
-- ~~Xavier Initialization (2010) Glorot, Bengio~~
+- ~~Xavier Initialization (2010)\
+  Glorot, Bengio~~
 
 - ~~Adam Optimizer (2014)\
-   Kingma & Ba~~
+  Kingma & Ba~~
 
 - ~~Deep Sparse Rectifier Networks (2011)\
   Glorot & Bengio~~
 
 - ~~Dropout (2014)\
-   Srivastava et al.~~
+  Srivastava et al.~~
 
 ---
 
@@ -81,8 +82,8 @@ papers.
 - ~~RNN Encoder-Decoders (2014)\
   Cho, Bengio~~
 
-- Seq2Seq (2014)\
-  Sutskever, Vinyals, Le
+- ~~Seq2Seq (2014)\
+  Sutskever, Vinyals, Le~~
 
 - Attention (2014)\
   Bahdanau, Cho, Bengio
