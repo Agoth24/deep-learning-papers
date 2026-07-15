@@ -1,0 +1,9 @@
+README.md
+pyproject.toml
+deep_learning_papers.egg-info/PKG-INFO
+deep_learning_papers.egg-info/SOURCES.txt
+deep_learning_papers.egg-info/dependency_links.txt
+deep_learning_papers.egg-info/requires.txt
+deep_learning_papers.egg-info/top_level.txt
+lib/__init__.py
+lib/trainer.py

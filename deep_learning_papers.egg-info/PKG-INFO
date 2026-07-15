@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: deep-learning-papers
+Version: 0.1.0
+Summary: Personal paper implementations and shared PyTorch training utilities.
+Requires-Python: >=3.10
+Requires-Dist: torch
+Requires-Dist: matplotlib
