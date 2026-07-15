@@ -3,6 +3,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim import Optimizer, lr_scheduler
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 class Trainer:
@@ -39,13 +40,17 @@ class Trainer:
             "test_accuracy": [],
         }
 
-    def _train_loop(self):
-        train_set_size = len(self.train_dataloader.dataset)
-        num_batches = len(self.train_dataloader)
-        self.model.train()
+    def _train_loop(self, current_epoch: int, num_epochs: int):
+        dataloader = self.train_dataloader
+        train_set_size = len(dataloader.dataset)
+        num_batches = len(dataloader)
 
         train_loss, correct_preds = 0, 0
-        for batch, (X, y) in enumerate(self.train_dataloader):
+        loop = tqdm(
+            dataloader, desc=f"Epoch [{current_epoch+1}/{num_epochs}]", leave=False
+        )
+        self.model.train()
+        for X, y in loop:
             X, y = X.to(self.device), y.to(self.device)
 
             # forward pass
@@ -63,27 +68,26 @@ class Trainer:
             train_loss += loss.item()
             correct_preds += (pred.argmax(1) == y).type(torch.float).sum().item()
 
-            if batch % 100 == 0:
-                current = batch * len(X)
-                print(
-                    f"Training Loss: {loss.item():>7f} [{current:>5d}/{train_set_size:>5d}]"
-                )
+            loop.set_postfix(Error=loss.item())
+
         train_loss /= num_batches
         train_acc = 100 * correct_preds / train_set_size
         return train_loss, train_acc
 
-    def _test_loop(self):
-        test_set_size = len(self.test_dataloader.dataset)
-        num_batches = len(self.test_dataloader)
-        self.model.eval()
+    def _test_loop(self, current_epoch: int, num_epochs: int):
+        dataloader = self.test_dataloader
+        test_set_size = len(dataloader.dataset)
+        num_batches = len(dataloader)
 
         test_loss, correct_preds = 0, 0
+        self.model.eval()
         with torch.no_grad():
-            for X, y in self.test_dataloader:
+            for X, y in dataloader:
                 X, y = X.to(self.device), y.to(self.device)
 
                 pred = self.model(X)
                 loss = self.loss_fn(pred, y)
+
                 test_loss += loss.item()
                 correct_preds += (pred.argmax(1) == y).type(torch.float).sum().item()
 
@@ -91,7 +95,7 @@ class Trainer:
             test_acc = 100 * correct_preds / test_set_size
 
             print(
-                f"Test Error: \nAccuracy: {(test_acc):>0.1f}% Avg loss: {test_loss:>8f}\n"
+                f"Epoch [{current_epoch+1}/{num_epochs}] Test Results - Accuracy: {(test_acc):>0.1f}% Avg loss: {test_loss:>8f}\n"
             )
         return test_loss, test_acc
 
@@ -102,13 +106,15 @@ class Trainer:
         save_frequency: int | None = None,
         save_path: str = "checkpoint.pth",
     ):
-        print("--------------- Training Loop ---------------\n")
         for epoch in range(start_epoch, epochs):
-            print(f"Epoch {epoch + 1}\n---------------------------------------")
-            train_loss, train_acc = self._train_loop()
+            train_loss, train_acc = self._train_loop(
+                current_epoch=epoch, num_epochs=epochs
+            )
             if self.scheduler and not self.step_scheduler_per_batch:
                 self.scheduler.step()
-            test_loss, test_acc = self._test_loop()
+            test_loss, test_acc = self._test_loop(
+                current_epoch=epoch, num_epochs=epochs
+            )
 
             self.history["train_loss"].append(train_loss)
             self.history["test_loss"].append(test_loss)
