@@ -10,7 +10,7 @@ class Trainer:
     def __init__(
         self,
         train_dataloader: DataLoader,
-        test_dataloader: DataLoader,
+        val_dataloader: DataLoader,
         model: nn.Module,
         loss_fn: nn.Module,
         optimizer: Optimizer,
@@ -26,7 +26,7 @@ class Trainer:
             )
         )
         self.train_dataloader = train_dataloader
-        self.test_dataloader = test_dataloader
+        self.val_dataloader = val_dataloader
         self.model = model.to(self.device)
         self.optimizer = optimizer
         self.scheduler = scheduler
@@ -36,9 +36,12 @@ class Trainer:
         self.history = {
             "train_loss": [],
             "train_accuracy": [],
-            "test_loss": [],
-            "test_accuracy": [],
+            "val_loss": [],
+            "val_accuracy": [],
         }
+
+    def accuracy(prediction, target):
+        return (prediction.argmax(1) == target).float().mean().item()
 
     def _train_loop(self, current_epoch: int, num_epochs: int):
         dataloader = self.train_dataloader
@@ -66,20 +69,20 @@ class Trainer:
                 self.scheduler.step()
 
             train_loss += loss.item()
-            correct_preds += (pred.argmax(1) == y).type(torch.float).sum().item()
+            correct_preds += self.accuracy(pred, y)
 
-            loop.set_postfix(Error=loss.item())
+            loop.set_postfix(Loss=loss.item())
 
         train_loss /= num_batches
         train_acc = 100 * correct_preds / train_set_size
         return train_loss, train_acc
 
-    def _test_loop(self, current_epoch: int, num_epochs: int):
-        dataloader = self.test_dataloader
-        test_set_size = len(dataloader.dataset)
+    def _val_loop(self, current_epoch: int, num_epochs: int):
+        dataloader = self.val_dataloader
+        val_set_size = len(dataloader.dataset)
         num_batches = len(dataloader)
 
-        test_loss, correct_preds = 0, 0
+        val_loss, correct_preds = 0, 0
         self.model.eval()
         with torch.no_grad():
             for X, y in dataloader:
@@ -88,41 +91,51 @@ class Trainer:
                 pred = self.model(X)
                 loss = self.loss_fn(pred, y)
 
-                test_loss += loss.item()
-                correct_preds += (pred.argmax(1) == y).type(torch.float).sum().item()
+                val_loss += loss.item()
+                correct_preds += self.accuracy(pred, y)
 
-            test_loss /= num_batches
-            test_acc = 100 * correct_preds / test_set_size
+            val_loss /= num_batches
+            val_acc = 100 * correct_preds / val_set_size
 
-            print(
-                f"Epoch [{current_epoch+1}/{num_epochs}] Test Results - Accuracy: {(test_acc):>0.1f}% Avg loss: {test_loss:>8f}\n"
-            )
-        return test_loss, test_acc
+        return val_loss, val_acc
 
     def fit(
         self,
-        epochs: int,
-        start_epoch: int = 0,
-        save_frequency: int | None = None,
+        num_epochs: int,
         save_path: str = "checkpoint.pth",
+        save_frequency: int | None = None,
+        start_epoch: int = 0,
     ):
-        for epoch in range(start_epoch, epochs):
+
+        if start_epoch >= num_epochs:
+            raise ValueError("Can't run training loop. Training is already complete")
+
+        for epoch in range(start_epoch, num_epochs):
             train_loss, train_acc = self._train_loop(
-                current_epoch=epoch, num_epochs=epochs
+                current_epoch=epoch, num_epochs=num_epochs
             )
             if self.scheduler and not self.step_scheduler_per_batch:
                 self.scheduler.step()
-            test_loss, test_acc = self._test_loop(
-                current_epoch=epoch, num_epochs=epochs
+            val_loss, val_acc = self._val_loop(
+                current_epoch=epoch, num_epochs=num_epochs
+            )
+
+            tqdm.write(
+                f"Epoch [{epoch+1}/{num_epochs}] "
+                f"loss={train_loss:.3f} acc={train_acc:.3f} | "
+                f"val_loss={val_loss:.3f} val_acc={val_acc:.3f}"
             )
 
             self.history["train_loss"].append(train_loss)
-            self.history["test_loss"].append(test_loss)
+            self.history["val_loss"].append(val_loss)
             self.history["train_accuracy"].append(train_acc)
-            self.history["test_accuracy"].append(test_acc)
+            self.history["val_accuracy"].append(val_acc)
 
             if save_frequency and (epoch + 1) % save_frequency == 0:
                 self.save_checkpoint(save_path, epoch)
+
+        if save_frequency:
+            self.save_checkpoint(save_path, epoch)
 
     def save_checkpoint(self, path: str, epoch: int):
         torch.save(
@@ -164,25 +177,30 @@ class Trainer:
     def resume(
         self,
         path: str,
-        epochs: int,
+        num_epochs: int,
         save_frequency: int | None = None,
         save_path: str = "checkpoint.pth",
     ):
         last_epoch = self.load_checkpoint(path)
-        self.fit(epochs, last_epoch + 1, save_frequency, save_path)
+        self.fit(
+            num_epochs=num_epochs,
+            start_epoch=last_epoch + 1,
+            save_frequency=save_frequency,
+            save_path=save_path,
+        )
 
     def plot(self):
         epochs = range(1, len(self.history["train_loss"]) + 1)
         fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 
         axes[0].plot(epochs, self.history["train_loss"], label="Train loss")
-        axes[0].plot(epochs, self.history["test_loss"], label="Test loss")
+        axes[0].plot(epochs, self.history["val_loss"], label="val loss")
         axes[0].set_xlabel("Epoch")
         axes[0].set_ylabel("Loss")
         axes[0].legend()
 
         axes[1].plot(epochs, self.history["train_accuracy"], label="Train accuracy")
-        axes[1].plot(epochs, self.history["test_accuracy"], label="Test accuracy")
+        axes[1].plot(epochs, self.history["val_accuracy"], label="val accuracy")
         axes[1].set_xlabel("Epoch")
         axes[1].set_ylabel("Accuracy (%)")
         axes[1].legend()
