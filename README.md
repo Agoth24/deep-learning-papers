@@ -85,8 +85,8 @@ papers.
 - ~~Seq2Seq (2014)\
   Sutskever, Vinyals, Le~~
 
-- Attention (2014)\
-  Bahdanau, Cho, Bengio
+- ~~Attention (2014)\
+  Bahdanau, Cho, Bengio~~
 
 - Attention-Based NMT (2015)\
   Luong et al.

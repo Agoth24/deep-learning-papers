@@ -144,5 +144,5 @@ optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, learning_rate, 0.9)
 
 trainer = Trainer(train_dataloader, test_dataloader, model, loss_criterion, optimizer, device)
-trainer.fit(epochs=10)
+trainer.fit(num_epochs=10)
 trainer.plot()
