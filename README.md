@@ -88,8 +88,8 @@ papers.
 - ~~Attention (2014)\
   Bahdanau, Cho, Bengio~~
 
-- Attention-Based NMT (2015)\
-  Luong et al.
+- ~~Efficient Attention-Based NMT (2015)\
+  Luong et al.~~
 
 ---
 
