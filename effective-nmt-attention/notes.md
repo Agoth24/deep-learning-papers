@@ -1,6 +1,4 @@
-# Effective Attention-Based NMT
-
-there are two main attention mechanisms: GLOBAL and LOCAL
+there are two main attention mechanisms: global and local
 
 - local performs better and is computationally cheaper --> more tailored context
 
@@ -9,18 +7,19 @@ there are two main attention mechanisms: GLOBAL and LOCAL
 neural machine translation models the conditional probability of target sequence
 given a source sequence.
 
-- can be broken into log conditional probability where given previous targets and
+- can be broken into log cond. prob. where given previous targets and
   representation encoding
 
 most NMT models use RNN decoders but have different architectures
 
 - differ in computation of context & choice of hidden units
 
-training objective is to minimize negative log likelihood over training corpus.
+training objective is to minimize negative log likelihood of output over
+training corpus.
 
 ### attention models
 
-global attention uses all encoder hidden states for softmax, local attention
+global attention uses ALL encoder hidden states for softmax, local attention
 only uses a subset.
 
 - used in attaining context vectors $c_t$
@@ -29,7 +28,7 @@ only uses a subset.
 
 compute softmax alignment vector (size = number of source timesteps)
 
-- score functions can be MODULARIZED
+- score functions can be MODULARIZED (substituted based on )
 
 #### local attention
 
